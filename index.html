@@ -187,7 +187,7 @@ document.getElementById("reserveForm").addEventListener("submit",async e=>{
   });
   fields.push({name:"合計",value:`¥${total.toLocaleString()}`});
 
-  await fetch(webhookURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[{title:"🕴️ Smoke Shop Transaction",fields,timestamp:new Date()}]})});
+  await fetch(webhookURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[{title:"だぽん商店",fields,timestamp:new Date()}]})});
   alert("送信完了");
 });
 </script>
