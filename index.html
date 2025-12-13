@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>購入履歴</title>
+
+  <!-- フォント -->
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body{
+      margin:0;
+      padding:0;
+      min-height:100vh;
+      background:radial-gradient(circle at top left,#2a1c14,#0f0b09 70%);
+      font-family:'Oswald',sans-serif;
+      color:#e6d9c8;
+    }
+
+    /* ===== メインカード ===== */
+    .card{
+      max-width:520px;
+      margin:30px 0 30px 30px; /* ← 左寄せ */
+      background:linear-gradient(180deg,#1a120d,#120b08);
+      border:1px solid #3a2a1d;
+      border-radius:18px;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.75),
+        inset 0 0 30px rgba(255,200,120,.05);
+      padding:26px;
+    }
+
+    h2{
+      text-align:left;
+      font-weight:600;
+      letter-spacing:2px;
+      color:#f5deb3;
+      margin:0 0 20px 0;
+    }
+
+    h3{
+      margin-top:26px;
+      color:#e0c58a;
+      border-bottom:1px solid #3a2a1d;
+      padding-bottom:6px;
+      letter-spacing:1px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:6px;
+      color:#cdbba7;
+      letter-spacing:1px;
+    }
+
+    select,input{
+      width:100%;
+      background:#0f0b09;
+      color:#f0e6d8;
+      border:1px solid #3a2a1d;
+      border-radius:10px;
+      padding:10px;
+      font-size:15px;
+      box-sizing:border-box;
+    }
+
+    /* ===== アイテム ===== */
+    .item-row{
+      display:grid;
+      grid-template-columns:140px 120px 120px;
+      gap:8px;
+      align-items:center;
+      margin-top:10px;
+      background:rgba(255,255,255,.02);
+      border:1px solid #2e2118;
+      border-radius:12px;
+      padding:8px;
+      transition:.2s;
+    }
+
+    .item-row:hover{
+      box-shadow:0 0 0 1px #caa45c inset;
+    }
+
+    .item-name{
+      color:#f5deb3;
+      letter-spacing:1px;
+    }
+
+    /* ===== 合計 ===== */
+    .total-box{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:24px;
+      padding-top:12px;
+      border-top:1px solid #3a2a1d;
+    }
+
+    .total-box span{
+      color:#cdbba7;
+      letter-spacing:1px;
+    }
+
+    #total{
+      font-size:22px;
+      color:#facc15;
+      text-shadow:0 0 8px rgba(250,204,21,.35);
+    }
+
+    /* ===== ボタン ===== */
+    button{
+      width:100%;
+      margin-top:22px;
+      padding:14px;
+      font-size:16px;
+      font-weight:600;
+      color:#2b1c0f;
+      background:linear-gradient(180deg,#f5deb3,#caa45c);
+      border:none;
+      border-radius:14px;
+      cursor:pointer;
+      box-shadow:0 8px 20px rgba(0,0,0,.55);
+      letter-spacing:2px;
+    }
+
+    button:hover{
+      filter:brightness(1.08);
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🚬 Smoke is Life(SiL)</h2>
+
+  <form id="reserveForm">
+    <label>名前</label>
+    <select id="name" required></select>
+
+    <h3>売却アイテム</h3>
+    <div id="items"></div>
+
+    <div class="total-box">
+      <span>合計金額</span>
+      <strong id="total">¥0</strong>
+    </div>
+
+    <button type="submit">送信</button>
+  </form>
+</div>
+
+<script>
+/* ===== Discord Webhook ===== */
+const webhookURL = "https://discord.com/api/webhooks/1449381615452028938/OD8djOLo9HwJNpoJ0oe7GBea9tsJqoL70ASz6J_VChsRmvbBDU7i4KGp_nQK2ML5tWSM";
+
+/* 名前 */
+const names = ["テスト君",""];
+
+/* 固定アイテム */
+const fixedItems = [
+  { name:"ガラス", price:1000 },
+  { name:"銅", price:1000 },
+  { name:"テスト", price:30000 }
+];
+
+const nameEl = document.getElementById("name");
+const itemsEl = document.getElementById("items");
+const totalEl = document.getElementById("total");
+
+/* 名前反映 */
+function refreshNames(){
+  nameEl.innerHTML = '<option value="">選択してください</option>';
+  names.forEach(n=> nameEl.innerHTML += `<option value="${n}">${n}</option>`);
+}
+
+/* アイテム描画 */
+fixedItems.forEach(item=>{
+  const row = document.createElement("div");
+  row.className = "item-row";
+  row.innerHTML = `
+    <div class="item-name">${item.name}</div>
+    <input type="number" class="item-price" value="${item.price}">
+    <input type="number" class="item-qty" value="0" min="0">
+  `;
+  itemsEl.appendChild(row);
+});
+
+/* 合計計算 */
+function calcTotal(){
+  let total = 0;
+  document.querySelectorAll(".item-row").forEach(r=>{
+    const p = Number(r.querySelector(".item-price").value);
+    const q = Number(r.querySelector(".item-qty").value);
+    total += p*q;
+  });
+  totalEl.textContent = `¥${total.toLocaleString()}`;
+  return total;
+}
+
+document.querySelectorAll(".item-price,.item-qty")
+  .forEach(i=>i.addEventListener("input",calcTotal));
+
+/* 送信 */
+document.getElementById("reserveForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+
+  const total = calcTotal();
+  const fields = [];
+  const bought = [];
+
+  document.querySelectorAll(".item-row").forEach(r=>{
+    const name = r.querySelector(".item-name").textContent;
+    const price = r.querySelector(".item-price").value;
+    const qty = Number(r.querySelector(".item-qty").value);
+    if(qty>0){
+      fields.push({name,value:`${qty} 個 × ¥${price}`,inline:true});
+      bought.push(`${name}(${qty})`);
+    }
+  });
+
+  fields.push({name:"合計",value:`¥${total.toLocaleString()}`});
+
+  await fetch(webhookURL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      embeds:[{
+        title:"🕴️ Smoke Shop Transaction",
+        description:`名前：${nameEl.value}\n購入：${bought.join(" / ")}`,
+        color:0xC9A24D,
+        fields,
+        footer:{text:"Smoke is Life(SiL)"},
+        timestamp:new Date()
+      }]
+    })
+  });
+
+  alert("送信完了");
+  e.target.reset();
+  totalEl.textContent="¥0";
+});
+
+refreshNames();
+</script>
+
+</body>
+</html>
