@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>購入履歴</title>
 
-  <!-- フォント -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -31,40 +30,61 @@
     h3{margin-top:26px;color:#e0c58a;border-bottom:1px solid #3a2a1d;padding-bottom:6px;}
     label{display:block;margin-bottom:6px;color:#cdbba7;}
 
-    select,input{
-      width:100%;background:#0f0b09;color:#f0e6d8;
-      border:1px solid #3a2a1d;border-radius:10px;
-      padding:10px;font-size:15px;box-sizing:border-box;
+    input{
+      width:100%;
+      background:#0f0b09;
+      color:#f0e6d8;
+      border:1px solid #3a2a1d;
+      border-radius:10px;
+      padding:10px;
+      font-size:15px;
+      box-sizing:border-box;
     }
 
     .item-row{
-      display:grid;grid-template-columns:140px 120px 120px;
-      gap:8px;align-items:center;margin-top:10px;
+      display:grid;
+      grid-template-columns:140px 120px 120px;
+      gap:8px;
+      align-items:center;
+      margin-top:10px;
       background:rgba(255,255,255,.02);
-      border:1px solid #2e2118;border-radius:12px;padding:8px;
+      border:1px solid #2e2118;
+      border-radius:12px;
+      padding:8px;
     }
 
     .item-name{color:#f5deb3;}
 
     .total-box{
-      display:flex;justify-content:space-between;
-      margin-top:24px;padding-top:12px;border-top:1px solid #3a2a1d;
+      display:flex;
+      justify-content:space-between;
+      margin-top:24px;
+      padding-top:12px;
+      border-top:1px solid #3a2a1d;
     }
 
     #total{font-size:22px;color:#facc15;}
 
     button{
-      width:100%;margin-top:22px;padding:14px;
-      font-size:16px;font-weight:600;
-      color:#2b1c0f;background:linear-gradient(180deg,#f5deb3,#caa45c);
-      border:none;border-radius:14px;cursor:pointer;
+      width:100%;
+      margin-top:22px;
+      padding:14px;
+      font-size:16px;
+      font-weight:600;
+      color:#2b1c0f;
+      background:linear-gradient(180deg,#f5deb3,#caa45c);
+      border:none;
+      border-radius:14px;
+      cursor:pointer;
     }
 
-    /* ===== 管理者モード ===== */
+    /* 管理者モード */
     .item-price{cursor:not-allowed;}
     .admin-on .item-price{
-      background:#1a140f;border-color:#caa45c;
-      color:#ffd88a;cursor:text;
+      background:#1a140f;
+      border-color:#caa45c;
+      color:#ffd88a;
+      cursor:text;
     }
   </style>
 </head>
@@ -73,7 +93,6 @@
 <div class="card">
   <h2>tanu</h2>
 
-  <!-- 管理者モード -->
   <label>管理者モード</label>
   <div style="display:flex;gap:8px;">
     <input type="password" id="adminPass" placeholder="パスコード">
@@ -82,7 +101,7 @@
 
   <form id="reserveForm">
     <label>名前と電話番号＜ゲーム内＞</label>
-<input type="text" id="name" placeholder="名前を入力" required> 
+    <input type="text" id="name" placeholder="名前 / 電話番号" required>
 
     <h3>販売・売却</h3>
     <div id="items"></div>
@@ -97,11 +116,10 @@
 </div>
 
 <script>
-const webhookURL = "https://discord.com/api/webhooks/1434674903075782816/g_NAvtOTHBv_q0K14noB1bKMo9E5kTVKXVdt8L2PedO2YNfSZ5D-Vs8-26t-9Hc8shdf";
+const webhookURL = "YOUR_WEBHOOK_URL";
 const ADMIN_PASSWORD = "85130";
 let adminMode = false;
 
-const names = ["テスト君"];
 const fixedItems = [
   { name:"ガラス", price:3000 },
   { name:"プラスチック", price:10000 },
@@ -124,15 +142,12 @@ const fixedItems = [
   { name:"買取・ゴム", price:8000 },
   { name:"買取・布", price:8000 },
   { name:"買取・鉄粉", price:1000 },
-  { name:"買取・クリプト", price:1000}
+  { name:"買取・クリプト", price:1000 }
 ];
 
-const nameEl = document.getElementById("name");
 const itemsEl = document.getElementById("items");
 const totalEl = document.getElementById("total");
-
-nameEl.innerHTML = '<option value="">選択してください</option>';
-names.forEach(n=>nameEl.innerHTML+=`<option>${n}</option>`);
+const nameEl = document.getElementById("name");
 
 fixedItems.forEach(item=>{
   const row=document.createElement("div");
@@ -148,48 +163,74 @@ fixedItems.forEach(item=>{
 function calcTotal(){
   let total=0;
   document.querySelectorAll('.item-row').forEach(r=>{
-    total+=r.querySelector('.item-price').value*r.querySelector('.item-qty').value;
+    total += r.querySelector('.item-price').value * r.querySelector('.item-qty').value;
   });
-  totalEl.textContent=`¥${total.toLocaleString()}`;
+  totalEl.textContent = `¥${total.toLocaleString()}`;
   return total;
 }
 
-document.addEventListener('input',e=>{
-  if(e.target.classList.contains('item-price')||e.target.classList.contains('item-qty')){
+document.addEventListener("input",e=>{
+  if(e.target.classList.contains("item-price") || e.target.classList.contains("item-qty")){
     calcTotal();
   }
 });
 
-// 管理者切替
 document.getElementById("adminBtn").addEventListener("click",()=>{
   const pass=document.getElementById("adminPass").value;
   if(!adminMode){
     if(pass!==ADMIN_PASSWORD){alert("パスコードが違います");return;}
-    adminMode=true;document.body.classList.add("admin-on");
-    document.querySelectorAll('.item-price').forEach(i=>i.removeAttribute('readonly'));
+    adminMode=true;
+    document.body.classList.add("admin-on");
+    document.querySelectorAll('.item-price').forEach(i=>i.removeAttribute("readonly"));
     alert("管理者モード ON");
   }else{
-    adminMode=false;document.body.classList.remove("admin-on");
-    document.querySelectorAll('.item-price').forEach(i=>i.setAttribute('readonly',true));
+    adminMode=false;
+    document.body.classList.remove("admin-on");
+    document.querySelectorAll('.item-price').forEach(i=>i.setAttribute("readonly",true));
     document.getElementById("adminPass").value="";
     alert("管理者モード OFF");
   }
 });
 
-// 送信
 document.getElementById("reserveForm").addEventListener("submit",async e=>{
   e.preventDefault();
+
   const total=calcTotal();
-  const fields=[];
+  const fields=[
+    { name:"名前 / 電話番号", value:nameEl.value }
+  ];
+
   document.querySelectorAll('.item-row').forEach(r=>{
     const q=r.querySelector('.item-qty').value;
-    if(q>0){fields.push({name:r.querySelector('.item-name').textContent,value:`${q} 個`,inline:true});}
+    if(q>0){
+      fields.push({
+        name:r.querySelector('.item-name').textContent,
+        value:`${q} 個`,
+        inline:true
+      });
+    }
   });
-  fields.push({name:"合計",value:`¥${total.toLocaleString()}`});
 
-  await fetch(webhookURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({embeds:[{title:"だぽん商店",fields,timestamp:new Date()}]})});
+  fields.push({ name:"合計", value:`¥${total.toLocaleString()}` });
+
+  await fetch(webhookURL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      embeds:[{
+        title:"だぽん商店",
+        color:0xC9A24D,
+        fields,
+        timestamp:new Date()
+      }]
+    })
+  });
+
   alert("送信完了");
+  e.target.reset();
+  totalEl.textContent="¥0";
 });
 </script>
+
 </body>
 </html>
