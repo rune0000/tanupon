@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>在庫管理（管理者専用）</title>
+<style>
+body{
+  font-family:"Noto Sans JP",sans-serif;
+  background:#2c2c2c;
+  color:#fff;
+  padding:20px;
+}
+.card{
+  max-width:720px;
+  margin:auto;
+  background:#3a3a3a;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+h2{text-align:center;margin-bottom:10px;}
+.subtitle{text-align:center;font-size:13px;opacity:.7;margin-bottom:15px;}
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+  gap:10px;
+}
+#search{
+  flex:1;
+  padding:6px 10px;
+  border-radius:6px;
+  border:none;
+}
+.total-stock{
+  font-weight:700;
+  background:#4f8f4f;
+  padding:6px 10px;
+  border-radius:6px;
+}
+.row{
+  display:grid;
+  grid-template-columns:1fr 120px 70px;
+  gap:10px;
+  margin-bottom:8px;
+  padding:8px;
+  border-radius:8px;
+  background:#444;
+  align-items:center;
+}
+.row.low{ background:#663333; }
+.row.zero{ background:#802222; }
+.diff{
+  font-weight:700;
+  text-align:center;
+}
+.diff.minus{ color:#ff8080; }
+.diff.plus{ color:#7CFF7C; }
+
+input{
+  padding:6px;
+  border-radius:6px;
+  border:none;
+  text-align:right;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+}
+.save{background:#4f8f4f;color:#fff;}
+.reset{background:#8888cc;color:#fff;}
+.logout{background:#b64a4a;color:#fff;}
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>📦 在庫管理ページ</h2>
+  <div class="subtitle">前回保存との差分表示</div>
+
+  <div class="top-bar">
+    <input type="text" id="search" placeholder="素材名で検索…">
+    <div class="total-stock" id="totalStock">合計: 0</div>
+  </div>
+
+  <div id="stockList"></div>
+
+  <button class="save" id="saveBtn">在庫を保存</button>
+  <button class="reset" id="resetDiffBtn">差分をリセット</button>
+  <button class="logout" id="logoutBtn">管理者ログアウト</button>
+</div>
+
+<script>
+const ADMIN_PASS="851312";
+if(localStorage.getItem("isAdmin")!=="true"){
+  const pass=prompt("管理者パスワードを入力");
+  if(pass!==ADMIN_PASS){alert("パスワードが違います");location.href="index.html";}
+  else localStorage.setItem("isAdmin","true");
+}
+
+const materials=["プラスチック","アルミニウム","鉄","剛鉄","スクラップ","ゴム","布","エイ","サメ"];
+const list=document.getElementById("stockList");
+const totalStockEl=document.getElementById("totalStock");
+
+function getStock(name){return Number(localStorage.getItem("stock_"+name)||0);}
+function setStock(name,val){localStorage.setItem("stock_"+name,val);}
+function getLastStock(name){return Number(localStorage.getItem("lastStock_"+name)||0);}
+function setLastStock(name,val){localStorage.setItem("lastStock_"+name,val);}
+
+function render(){
+ list.innerHTML="";
+ let total=0;
+
+ materials.forEach(name=>{
+   const stock=getStock(name);
+   const last=getLastStock(name);
+   const diff=stock-last;
+   total+=stock;
+
+   let cls="";
+   if(stock===0) cls="zero";
+   else if(stock<50) cls="low";
+
+   let diffText="-";
+   let diffClass="";
+   if(diff<0){diffText=diff; diffClass="minus";}
+   else if(diff>0){diffText="+"+diff; diffClass="plus";}
+
+   list.innerHTML+=`
+     <div class="row ${cls}" data-name="${name}">
+       <span>${name}</span>
+       <input type="number" value="${stock}" data-name="${name}">
+       <div class="diff ${diffClass}">${diffText}</div>
+     </div>
+   `;
+ });
+
+ totalStockEl.textContent="合計: "+total.toLocaleString();
+}
+render();
+
+// 保存ボタン
+document.getElementById("saveBtn").onclick=()=>{
+ document.querySelectorAll("#stockList input").forEach(i=>{
+   const name=i.dataset.name;
+   const val=Number(i.value);
+   setLastStock(name,getStock(name));
+   setStock(name,val);
+ });
+ render();
+ alert("在庫を保存しました（差分更新）");
+};
+
+// 🆕 差分リセット
+document.getElementById("resetDiffBtn").onclick=()=>{
+ document.querySelectorAll("#stockList input").forEach(i=>{
+   const name=i.dataset.name;
+   const val=Number(i.value);
+   setStock(name,val);
+   setLastStock(name,val); // 今の値を前回値として保存
+ });
+ render();
+ alert("差分をリセットしました");
+};
+
+document.getElementById("logoutBtn").onclick=()=>{
+ localStorage.setItem("isAdmin","false");
+ alert("ログアウトしました");
+ location.href="index.html";
+};
+
+document.getElementById("search").addEventListener("input",e=>{
+ const word=e.target.value;
+ document.querySelectorAll(".row").forEach(r=>{
+   r.style.display=r.dataset.name.includes(word)?"grid":"none";
+ });
+});
+</script>
+</body>
+</html>
