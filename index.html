@@ -2,79 +2,188 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>素材屋 在庫管理伝票</title>
+<title>素材屋 取引伝票</title>
+
 <style>
 :root{
-  --paper:#f6f1e7; --paper-dark:#e9e1d3; --ink:#2b2b2b;
-  --sell:#4f8f4f; --buy:#b64a4a;
+  --paper:#f6f1e7;
+  --paper-dark:#e9e1d3;
+  --ink:#2b2b2b;
+  --sell:#4f8f4f;
+  --buy:#b64a4a;
 }
+
 body{
   min-height:100vh;
-  background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.4)),
-  repeating-linear-gradient(90deg,#6b4f3f 0px,#6b4f3f 40px,#735744 40px,#735744 80px);
-  font-family:"Noto Sans JP",sans-serif;padding:24px;color:var(--ink);
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.4)),
+    repeating-linear-gradient(
+      90deg,
+      #6b4f3f 0px,
+      #6b4f3f 40px,
+      #735744 40px,
+      #735744 80px
+    );
+  font-family:"Noto Sans JP","Hiragino Maru Gothic ProN",system-ui,sans-serif;
+  padding:24px;
+  color:var(--ink);
 }
+
 body.buy-mode{
-  background:linear-gradient(180deg,rgba(0,0,0,.3),rgba(0,0,0,.5)),
-  repeating-linear-gradient(90deg,#5a3b3b 0px,#5a3b3b 40px,#633f3f 40px,#633f3f 80px);
-}
-.card{max-width:700px;margin:auto;padding:22px;border-radius:12px;
-background:repeating-linear-gradient(-45deg,#f6f1e7,#f6f1e7 6px,#f3ecdf 6px,#f3ecdf 12px);
-border:2px solid var(--paper-dark);box-shadow:0 8px 20px rgba(0,0,0,.4);}
-h2{text-align:center;margin-bottom:4px;}
-.subtitle{text-align:center;font-size:12px;opacity:.7;margin-bottom:10px;}
-
-.admin-bar{
-  margin-bottom:10px;
-  display:flex;
-  justify-content:flex-end;
-  gap:6px;
-}
-.admin-bar button{
-  padding:6px 10px;border-radius:6px;border:2px solid #c9bfae;background:#fff;cursor:pointer;font-weight:600;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.3),rgba(0,0,0,.5)),
+    repeating-linear-gradient(
+      90deg,
+      #5a3b3b 0px,
+      #5a3b3b 40px,
+      #633f3f 40px,
+      #633f3f 80px
+    );
 }
 
-input{width:100%;box-sizing:border-box;padding:6px;height:34px;border-radius:6px;border:2px solid #c9bfae;background:#fffdf8;font-size:14px;}
-.form-group{display:grid;gap:10px;margin-bottom:14px;}
-.tabs{display:flex;gap:6px;margin-bottom:14px;}
-.tab{flex:1;padding:10px;border-radius:8px;border:2px solid #c9bfae;background:#fff;cursor:pointer;font-weight:600;}
-.tab.active{background:var(--paper-dark);}
+/* ===== カード ===== */
+.card{
+  max-width:520px;
+  margin:auto;
+  padding:22px;
+  border-radius:12px;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      #f6f1e7,
+      #f6f1e7 6px,
+      #f3ecdf 6px,
+      #f3ecdf 12px
+    );
+  border:2px solid var(--paper-dark);
+  box-shadow:0 8px 20px rgba(0,0,0,.4);
+}
 
-#items::before{
-  content:"素材 / 単価 / 在庫 / 数量 / 小計";
+h2{
+  text-align:center;
+  letter-spacing:.15em;
+  margin-bottom:4px;
+}
+
+.subtitle{
+  text-align:center;
+  font-size:12px;
+  opacity:.7;
+  margin-bottom:16px;
+}
+
+/* ===== 入力 ===== */
+input{
+  width:100%;
+  box-sizing:border-box;
+  padding:8px;
+  height:36px;
+  border-radius:6px;
+  border:2px solid #c9bfae;
+  background:#fffdf8;
+  color:var(--ink);
+  font-size:14px;
+}
+
+.form-group{
   display:grid;
-  grid-template-columns:1fr 90px 90px 130px 90px;
-  gap:8px;font-size:12px;opacity:.7;margin-bottom:6px;
+  gap:10px;
+  margin-bottom:14px;
 }
+
+/* ===== タブ ===== */
+.tabs{
+  display:flex;
+  gap:6px;
+  margin-bottom:14px;
+}
+
+.tab{
+  flex:1;
+  padding:10px;
+  border-radius:8px;
+  border:2px solid #c9bfae;
+  background:#fff;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.tab.active{
+  background:var(--paper-dark);
+}
+
+/* ===== アイテム一覧 ===== */
+#items::before{
+  content:"素材 / 単価 / 数量";
+  display:grid;
+  grid-template-columns:1fr 110px 70px;
+  gap:10px;
+  font-size:12px;
+  opacity:.7;
+  margin-bottom:6px;
+}
+
 .item-row{
   display:grid;
-  grid-template-columns:1fr 90px 90px 130px 90px;
-  gap:8px;margin-bottom:6px;align-items:center;
+  grid-template-columns:1fr 110px 70px;
+  gap:10px;
+  margin-bottom:6px;
 }
-.item-price{text-align:right;}
-.item-stock{text-align:center;background:#eee;}
-.item-stock.editable{background:#fff;}
-.qty-box{display:flex;gap:4px;}
-.qty-box button{width:26px;height:26px;border-radius:6px;border:2px solid #c9bfae;background:#fff;font-weight:700;cursor:pointer;}
-.item-qty{text-align:center;}
-.item-sub{text-align:right;font-size:13px;}
 
-.total-box{margin-top:16px;padding:14px;background:#fffdf8;border:2px dashed #c9bfae;border-radius:10px;display:flex;justify-content:center;gap:16px;}
-#total{font-size:22px;font-weight:700;color:var(--sell);}
-body.buy-mode #total{color:var(--buy);}
+.item-price{
+  text-align:right;
+}
 
-button.send{width:100%;padding:14px;margin-top:14px;border-radius:10px;border:none;background:linear-gradient(#fff,#e9e1d3);font-weight:700;cursor:pointer;}
+.item-qty{
+  text-align:center;
+}
+
+/* ===== 合計 ===== */
+.total-box{
+  margin-top:16px;
+  padding:14px;
+  background:#fffdf8;
+  border:2px dashed #c9bfae;
+  border-radius:10px;
+  display:flex;
+  justify-content:center;
+  gap:16px;
+}
+
+#total{
+  font-size:22px;
+  font-weight:700;
+  color:var(--sell);
+}
+
+body.buy-mode #total{
+  color:var(--buy);
+}
+
+/* ===== 送信 ===== */
+button{
+  width:100%;
+  padding:14px;
+  margin-top:14px;
+  border-radius:10px;
+  border:none;
+  background:linear-gradient(#fff,#e9e1d3);
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 4px 0 #c9bfae;
+}
+
+button:active{
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #c9bfae;
+}
 </style>
 </head>
+
 <body>
 <div class="card">
   <h2>だぽん商店＜素材屋＞</h2>
-  <div class="subtitle">― 在庫連動 取引伝票 ―</div>
-
-  <div class="admin-bar">
-    <button id="adminBtn">🔒 管理者ログイン</button>
-    <button id="goAdminPage">📦 在庫管理ページ</button>
-  </div>
+  <div class="subtitle">― 取引伝票 ―</div>
 
   <div class="form-group">
     <input id="shop" placeholder="電話番号＜ゲーム内＞">
@@ -93,101 +202,126 @@ button.send{width:100%;padding:14px;margin-top:14px;border-radius:10px;border:no
     <strong id="total">¥0</strong>
   </div>
 
-  <button id="sendBtn" class="send">伝票を送信</button>
+  <button id="sendBtn">伝票を送信</button>
 </div>
 
 <script>
-const ADMIN_PASS = "851312";
 const webhookURL = "https://discord.com/api/webhooks/1434674903075782816/g_NAvtOTHBv_q0K14noB1bKMo9E5kTVKXVdt8L2PedO2YNfSZ5D-Vs8-26t-9Hc8shdf";
-let isAdmin = localStorage.getItem("isAdmin")==="true";
-let mode="sell";
 
-const baseData={
- sell:[{name:"プラスチック",price:7000},{name:"アルミニウム",price:7000},{name:"鉄",price:7000},{name:"剛鉄",price:7000},{name:"スクラップ",price:7000},{name:"ゴム",price:7000},{name:"布",price:7000}],
- buy:[{name:"プラスチック",price:5000},{name:"アルミニウム",price:5000},{name:"鉄",price:5000},{name:"剛鉄",price:5000},{name:"スクラップ",price:5000},{name:"ゴム",price:5000},{name:"布",price:5000},{name:"エイ",price:1200000},{name:"サメ",price:1100000}]
+  
+let mode = "sell";
+
+const data = {
+  sell: [
+  { name:"プラスチック", price:7000 },
+  { name:"アルミニウム", price:7000 },
+  { name:"鉄", price:7000 },
+  { name:"剛鉄", price:7000 },
+  { name:"スクラップ", price:7000 },
+  { name:"ゴム", price:7000 },
+  { name:"布", price:7000 },
+  ],
+  buy: [
+  { name:"プラスチック", price:5000 },
+  { name:"アルミニウム", price:5000 },
+  { name:"鉄", price:5000 },
+  { name:"剛鉄", price:5000 },
+  { name:"スクラップ", price:5000 },
+  { name:"ゴム", price:5000 },
+  { name:"布", price:5000 },
+  { name:"‐－－－－－－－－－－－", price:0 },
+  { name:"エイ", price:1200000 },
+  { name:"サメ", price:1100000 },
+  { name:"‐－－－－－－－－－－－", price:0 },
+  ]
 };
 
-const itemsEl=document.getElementById("items");
-const totalEl=document.getElementById("total");
-const totalLabel=document.getElementById("totalLabel");
-const adminBtn=document.getElementById("adminBtn");
-const nameEl=document.getElementById("name");
-const shopEl=document.getElementById("shop");
-
-function getStock(name){return Number(localStorage.getItem("stock_"+name)||0);}
-function setStock(name,val){localStorage.setItem("stock_"+name,val);}
+const itemsEl = document.getElementById("items");
+const totalEl = document.getElementById("total");
+const totalLabel = document.getElementById("totalLabel");
+const nameEl = document.getElementById("name");
+const shopEl = document.getElementById("shop");
 
 function render(){
- itemsEl.innerHTML="";
- baseData[mode].forEach(i=>{
-   const stock=getStock(i.name);
-   itemsEl.innerHTML+=`
-   <div class="item-row">
-     <div>${i.name}</div>
-     <input class="item-price" value="${i.price}" readonly>
-     <input class="item-stock ${isAdmin?"editable":""}" type="number" value="${stock}" data-name="${i.name}" ${isAdmin?"":"readonly"}>
-     <div class="qty-box">
-       <button type="button" class="minus">－</button>
-       <input class="item-qty" type="number" value="0" min="0">
-       <button type="button" class="plus">＋</button>
-     </div>
-     <div class="item-sub">¥0</div>
-   </div>`;
- });
- totalEl.textContent="¥0";
- totalLabel.textContent=mode==="sell"?"支払額":"受取額";
- document.body.classList.toggle("buy-mode",mode==="buy");
- adminBtn.textContent=isAdmin?"🔓 管理者ログアウト":"🔒 管理者ログイン";
+  itemsEl.innerHTML = "";
+  data[mode].forEach(i=>{
+    itemsEl.innerHTML += `
+      <div class="item-row">
+        <div>${i.name}</div>
+        <input class="item-price" value="${i.price}" readonly>
+        <input class="item-qty" type="number" value="0" min="0">
+      </div>
+    `;
+  });
+  totalEl.textContent = "¥0";
+  totalLabel.textContent = mode==="sell" ? "支払額" : "受取額";
+  document.body.classList.toggle("buy-mode", mode==="buy");
 }
 render();
 
-adminBtn.onclick=()=>{
- if(isAdmin){isAdmin=false;localStorage.setItem("isAdmin","false");render();return;}
- const pass=prompt("管理者パスワードを入力");
- if(pass===ADMIN_PASS){isAdmin=true;localStorage.setItem("isAdmin","true");render();}
- else alert("パスワードが違います");
-};
-
-// 🔹 管理ページへ移動
-document.getElementById("goAdminPage").onclick=()=>{
- if(localStorage.getItem("isAdmin")!=="true"){alert("管理者ログインが必要です");return;}
- location.href="admin.html";
-};
-
-document.addEventListener("input",e=>{
- if(e.target.classList.contains("item-stock") && isAdmin){
-   setStock(e.target.dataset.name,e.target.value);
- }
- calc();
-});
-
-document.addEventListener("click",e=>{
- if(e.target.classList.contains("plus")||e.target.classList.contains("minus")){
-   const input=e.target.parentElement.querySelector(".item-qty");
-   let val=Number(input.value);
-   if(e.target.classList.contains("plus")) val++;
-   if(e.target.classList.contains("minus")&&val>0) val--;
-   input.value=val;
-   calc();
- }
-});
-
 function calc(){
- let total=0;
- document.querySelectorAll(".item-row").forEach(r=>{
-   const price=Number(r.querySelector(".item-price").value);
-   const qty=Number(r.querySelector(".item-qty").value);
-   const sub=price*qty;
-   r.querySelector(".item-sub").textContent=`¥${sub.toLocaleString()}`;
-   total+=sub;
- });
- totalEl.textContent=`¥${total.toLocaleString()}`;
+  let total = 0;
+  document.querySelectorAll(".item-row").forEach(r=>{
+    total += Number(r.children[1].value) * Number(r.children[2].value);
+  });
+  totalEl.textContent = `¥${total.toLocaleString()}`;
 }
 
+document.addEventListener("input", calc);
+
 document.querySelectorAll(".tab").forEach(t=>{
- t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
- t.classList.add("active");mode=t.dataset.mode;render();};
+  t.onclick = ()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    mode = t.dataset.mode;
+    render();
+  };
 });
+
+sendBtn.onclick = async ()=>{
+  if(!nameEl.value) return alert("名前を入力してください");
+
+  const fields = [
+    { name:"名前", value:nameEl.value, inline:true }
+  ];
+
+  if(shopEl.value){
+    fields.push({ name:"担当", value:shopEl.value, inline:true });
+  }
+
+  document.querySelectorAll(".item-row").forEach(r=>{
+    const qty = Number(r.children[2].value);
+    if(qty > 0){
+      fields.push({
+        name: r.children[0].textContent,
+        value: `${qty} 個`,
+        inline: true
+      });
+    }
+  });
+
+  fields.push({
+    name: mode==="sell" ? "支払額" : "受取額",
+    value: totalEl.textContent
+  });
+
+  await fetch(webhookURL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      embeds:[{
+        title:`【${mode==="sell"?"販売":"買取"}】だぽん商店＜素材屋＞`,
+        color: mode==="sell"?0x4F8F4F:0xB64A4A,
+        fields,
+        timestamp:new Date().toISOString()
+      }]
+    })
+  });
+
+  alert("伝票を送信しました");
+  render();
+  nameEl.value="";
+};
 </script>
 </body>
 </html>
