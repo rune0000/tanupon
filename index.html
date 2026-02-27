@@ -64,10 +64,37 @@ button{
 }
 button:active{transform:translateY(2px);box-shadow:0 2px 0 #c9bfae;}
 .stock{margin-top:8px;font-size:14px;display:flex;justify-content:space-between;}
+
+/* ⭐ 追加：管理ボタン */
+.admin-btn{
+  position:fixed;
+  top:20px;
+  right:20px;
+  width:100px;
+  height:100px;
+  border-radius:14px;
+  border:none;
+  font-size:14px;
+  font-weight:700;
+  background:linear-gradient(#fff,#e9e1d3);
+  box-shadow:0 6px 0 #c9bfae;
+  cursor:pointer;
+  z-index:999;
+}
+.admin-btn:active{
+  transform:translateY(3px);
+  box-shadow:0 3px 0 #c9bfae;
+}
 </style>
 </head>
 
 <body>
+
+<!-- ⭐ 追加：管理ページボタン -->
+<button class="admin-btn" onclick="location.href='admin'">
+管理<br>ページ
+</button>
+
 <div class="card">
   <h2>だぽん商店＜素材屋＞</h2>
   <div class="subtitle">― 取引伝票 ―</div>
@@ -98,7 +125,6 @@ button:active{transform:translateY(2px);box-shadow:0 2px 0 #c9bfae;}
 
 <script>
 const webhookURL = "https://discord.com/api/webhooks/1434674903075782816/g_NAvtOTHBv_q0K14noB1bKMo9E5kTVKXVdt8L2PedO2YNfSZ5D-Vs8-26t-9Hc8shdf";
-
 const DATA_URL = "https://rune0000.github.io/tanupon/docs/data/items.json";
 const API_URL  = "https://tanupon-git-main-rune0000s-projects.vercel.app/api/update-stock";
 let mode = "sell";
