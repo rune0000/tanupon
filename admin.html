@@ -97,7 +97,9 @@ if(localStorage.getItem("isAdmin")!=="true"){
 }
 
 const DATA_URL = "https://rune0000.github.io/tanupon/docs/data/items.json";
-const API_URL  = "https://tanupon-git-main-rune0000s-projects.vercel.app/api/update-stock";
+
+/* ★ここが修正ポイント（本番API） */
+const API_URL  = "https://tanupon.vercel.app/api/update-stock";
 
 let stockData=[];
 
@@ -132,7 +134,6 @@ function render(){
  totalStockEl.textContent="合計: "+total.toLocaleString();
 }
 
-/* ⭐ 修正ポイントここ */
 document.getElementById("saveBtn").onclick = async ()=>{
   try{
     for(const input of document.querySelectorAll("#stockList input")){
