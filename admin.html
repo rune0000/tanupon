@@ -89,15 +89,20 @@ button{
 </div>
 
 <script>
-const ADMIN_PASS="851312";
-if(localStorage.getItem("isAdmin")!=="true"){
-  const pass=prompt("管理者パスワードを入力");
-  if(pass!==ADMIN_PASS){alert("パスワードが違います");location.href="index.html";}
-  else localStorage.setItem("isAdmin","true");
+const ADMIN_PASS = "851312";
+
+/* ★パスワード認証 ★ */
+if(localStorage.getItem("isAdmin") !== "true"){
+  const pass = prompt("管理者パスワードを入力してください");
+  if(pass !== ADMIN_PASS){
+    alert("パスワードが違います");
+    location.href = "index.html";
+  } else {
+    localStorage.setItem("isAdmin", "true");
+  }
 }
 
 const DATA_URL = "https://rune0000.github.io/tanupon/docs/data/items.json";
-
 /* ★ここが修正ポイント（本番API） */
 const API_URL  = "https://tanupon.vercel.app/api/update-stock";
 
@@ -167,14 +172,14 @@ document.getElementById("saveBtn").onclick = async ()=>{
   }
 };
 
-document.getElementById("search").addEventListener("input",e=>{
- const word=e.target.value;
+document.getElementById("search").addEventListener("input", e=>{
+ const word = e.target.value;
  document.querySelectorAll(".row").forEach(r=>{
-   r.style.display=r.textContent.includes(word)?"grid":"none";
+   r.style.display = r.textContent.includes(word) ? "grid" : "none";
  });
 });
 
-document.getElementById("logoutBtn").onclick=()=>{
+document.getElementById("logoutBtn").onclick = ()=>{
  localStorage.setItem("isAdmin","false");
  location.href="index.html";
 };
