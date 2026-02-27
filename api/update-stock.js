@@ -1,4 +1,15 @@
 export default async function handler(req, res) {
+
+  // ⭐ CORS許可（超重要）
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // ⭐ 事前リクエスト対応
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") {
     return res.status(405).send("Method Not Allowed");
   }
@@ -15,20 +26,15 @@ export default async function handler(req, res) {
     const repo = "tanupon";
     const path = "docs/data/items.json";
 
-    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-
-    // 現在のJSON取得
-    const getFile = await fetch(url, {
-      headers: {
-        Authorization: `token ${token}`,
-        Accept: "application/vnd.github+json"
+    const getFile = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json"
+        }
       }
-    });
-
-    if (!getFile.ok) {
-      const text = await getFile.text();
-      return res.status(500).json({ error: text });
-    }
+    );
 
     const fileData = await getFile.json();
 
@@ -47,23 +53,21 @@ export default async function handler(req, res) {
       .from(JSON.stringify(items, null, 2))
       .toString("base64");
 
-    const updateFile = await fetch(url, {
-      method: "PUT",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: "auto stock update",
-        content: updatedContent,
-        sha: fileData.sha
-      })
-    });
-
-    if (!updateFile.ok) {
-      const text = await updateFile.text();
-      return res.status(500).json({ error: text });
-    }
+    await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: "auto stock update",
+          content: updatedContent,
+          sha: fileData.sha
+        })
+      }
+    );
 
     return res.status(200).json({ success: true });
 
