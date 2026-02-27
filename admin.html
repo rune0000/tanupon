@@ -89,7 +89,6 @@ button{
 </div>
 
 <script>
-// ===== 管理者認証 =====
 const ADMIN_PASS="851312";
 if(localStorage.getItem("isAdmin")!=="true"){
   const pass=prompt("管理者パスワードを入力");
@@ -97,7 +96,6 @@ if(localStorage.getItem("isAdmin")!=="true"){
   else localStorage.setItem("isAdmin","true");
 }
 
-// ===== 接続設定 =====
 const DATA_URL = "https://rune0000.github.io/tanupon/docs/data/items.json";
 const API_URL  = "https://tanupon-git-main-rune0000s-projects.vercel.app/api/update-stock";
 
@@ -106,14 +104,12 @@ let stockData=[];
 const list=document.getElementById("stockList");
 const totalStockEl=document.getElementById("totalStock");
 
-// ===== 在庫取得 =====
 async function loadStock(){
   const res = await fetch(DATA_URL + "?t=" + Date.now());
   stockData = await res.json();
   render();
 }
 
-// ===== 表示 =====
 function render(){
  list.innerHTML="";
  let total=0;
@@ -136,30 +132,40 @@ function render(){
  totalStockEl.textContent="合計: "+total.toLocaleString();
 }
 
-// ===== 保存（API更新） =====
+/* ⭐ 修正ポイントここ */
 document.getElementById("saveBtn").onclick = async ()=>{
-  for(const input of document.querySelectorAll("#stockList input")){
-    const id = input.dataset.id;
-    const newVal = Number(input.value);
+  try{
+    for(const input of document.querySelectorAll("#stockList input")){
+      const id = input.dataset.id;
+      const newVal = Number(input.value);
 
-    const item = stockData.find(i=>i.id===id);
-    if(!item) continue;
+      const item = stockData.find(i=>i.id===id);
+      if(!item) continue;
 
-    const delta = newVal - item.available;
-    if(delta!==0){
-      await fetch(API_URL,{
+      const delta = newVal - item.available;
+      if(delta===0) continue;
+
+      const res = await fetch(API_URL,{
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({ id, delta })
       });
-    }
-  }
 
-  alert("在庫を更新しました");
-  loadStock();
+      if(!res.ok){
+        const text = await res.text();
+        throw new Error(text);
+      }
+    }
+
+    alert("在庫を更新しました");
+    loadStock();
+
+  }catch(err){
+    alert("保存失敗:\n" + err.message);
+    console.error(err);
+  }
 };
 
-// ===== 検索 =====
 document.getElementById("search").addEventListener("input",e=>{
  const word=e.target.value;
  document.querySelectorAll(".row").forEach(r=>{
@@ -167,7 +173,6 @@ document.getElementById("search").addEventListener("input",e=>{
  });
 });
 
-// ===== ログアウト =====
 document.getElementById("logoutBtn").onclick=()=>{
  localStorage.setItem("isAdmin","false");
  location.href="index.html";
