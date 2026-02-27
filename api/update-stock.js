@@ -1,11 +1,11 @@
 export default async function handler(req, res) {
 
-  // ⭐ CORS許可（超重要）
+  // ⭐ CORS許可（最重要）
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ⭐ 事前リクエスト対応
+  // ⭐ preflight対応
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -26,6 +26,7 @@ export default async function handler(req, res) {
     const repo = "tanupon";
     const path = "docs/data/items.json";
 
+    // 現在ファイル取得
     const getFile = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
       {
@@ -53,6 +54,7 @@ export default async function handler(req, res) {
       .from(JSON.stringify(items, null, 2))
       .toString("base64");
 
+    // GitHubへ保存
     await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
       {
