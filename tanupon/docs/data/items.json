@@ -1,9 +1,0 @@
-[
-  { "id": "plastic",  "name": "プラスチック",  "available": 100 },
-  { "id": "aluminum", "name": "アルミニウム", "available": 100 },
-  { "id": "iron",     "name": "鉄",           "available": 100 },
-  { "id": "steel",    "name": "剛鉄",         "available": 100 },
-  { "id": "scrap",    "name": "スクラップ",   "available": 100 },
-  { "id": "rubber",   "name": "ゴム",         "available": 100 },
-  { "id": "cloth",    "name": "布",           "available": 100 }
-]
