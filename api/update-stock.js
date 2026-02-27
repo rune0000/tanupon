@@ -15,19 +15,19 @@ export default async function handler(req, res) {
     const repo = "tanupon";
     const path = "docs/data/items.json";
 
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
     // 現在のJSON取得
-    const getFile = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/vnd.github+json"
-        }
+    const getFile = await fetch(url, {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github+json"
       }
-    );
+    });
 
     if (!getFile.ok) {
-      return res.status(500).json({ error: "Failed to fetch file" });
+      const text = await getFile.text();
+      return res.status(500).json({ error: text });
     }
 
     const fileData = await getFile.json();
@@ -41,32 +41,28 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Item not found" });
     }
 
-    // 在庫更新（0未満にならない）
     item.available = Math.max(0, item.available + delta);
 
     const updatedContent = Buffer
       .from(JSON.stringify(items, null, 2))
       .toString("base64");
 
-    // GitHubへ保存
-    const updateFile = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: "auto stock update",
-          content: updatedContent,
-          sha: fileData.sha
-        })
-      }
-    );
+    const updateFile = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: "auto stock update",
+        content: updatedContent,
+        sha: fileData.sha
+      })
+    });
 
     if (!updateFile.ok) {
-      return res.status(500).json({ error: "Failed to update file" });
+      const text = await updateFile.text();
+      return res.status(500).json({ error: text });
     }
 
     return res.status(200).json({ success: true });
