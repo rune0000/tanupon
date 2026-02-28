@@ -1,9 +1,9 @@
 [
-  { "id": "plastic",  "name": "プラスチック",  "available": 0 },
-  { "id": "aluminum", "name": "アルミニウム", "available": 0 },
-  { "id": "iron",     "name": "鉄",           "available": 0 },
-  { "id": "steel",    "name": "剛鉄",         "available": 0 },
-  { "id": "scrap",    "name": "スクラップ",   "available": 0 },
-  { "id": "rubber",   "name": "ゴム",         "available": 0 },
-  { "id": "cloth",    "name": "布",           "available": 0 }
+  { "id": "plastic",  "name": "プラスチック",  "available": 35955 },
+  { "id": "aluminum", "name": "アルミニウム", "available": 39906 },
+  { "id": "iron",     "name": "鉄",           "available": 33518 },
+  { "id": "steel",    "name": "剛鉄",         "available": 435 },
+  { "id": "scrap",    "name": "スクラップ",   "available": 19196 },
+  { "id": "rubber",   "name": "ゴム",         "available": 18811 },
+  { "id": "cloth",    "name": "布",           "available": 24043 }
 ]
