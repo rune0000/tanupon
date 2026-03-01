@@ -65,7 +65,7 @@ button{
 button:active{transform:translateY(2px);box-shadow:0 2px 0 #c9bfae;}
 .stock{margin-top:8px;font-size:14px;display:flex;justify-content:space-between;}
 
-/* ⭐ 追加：管理ボタン */
+/* ⭐ 管理ボタン */
 .admin-btn{
   position:fixed;
   top:20px;
@@ -85,15 +85,61 @@ button:active{transform:translateY(2px);box-shadow:0 2px 0 #c9bfae;}
   transform:translateY(3px);
   box-shadow:0 3px 0 #c9bfae;
 }
+
+/* ⭐ 左側フォームリンク枠（追加部分） */
+.form-link-box{
+  position:fixed;
+  left:20px;
+  top:50%;
+  transform:translateY(-50%);
+  width:170px;
+  padding:14px;
+  border-radius:14px;
+  border:2px solid #c9bfae;
+  background:repeating-linear-gradient(-45deg,#f6f1e7,#f6f1e7 6px,#f3ecdf 6px,#f3ecdf 12px);
+  box-shadow:0 8px 20px rgba(0,0,0,.4);
+  text-align:center;
+  z-index:999;
+}
+
+.form-link-box a{
+  display:block;
+  padding:10px;
+  border-radius:8px;
+  text-decoration:none;
+  color:#2b2b2b;
+  font-weight:700;
+  background:linear-gradient(#fff,#e9e1d3);
+  box-shadow:0 4px 0 #c9bfae;
+}
+
+.form-link-box a + a{
+  margin-top:8px;
+}
+
+.form-link-box a:active{
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #c9bfae;
+}
 </style>
 </head>
 
 <body>
 
-<!-- ⭐ 追加：管理ページボタン -->
+<!-- ⭐ 管理ページボタン -->
 <button class="admin-btn" onclick="location.href='admin'">
 管理<br>ページ
 </button>
+
+<!-- ⭐ 左のフォームリンク（URLを書き換えるだけ） -->
+<div class="form-link-box">
+  <div style="margin-bottom:10px;font-size:14px;font-weight:700;">
+    各種フォーム
+  </div>
+
+  <a href="https://forms.gle/A7M4LKgieBm8EBeB8" target="_blank">＜白市民＞素材アンケート</a>
+  <a href="https://forms.gle/Pn9ZKZqP5yfVbnmK6" target="_blank">＜黒市民＞素材アンケート</a>
+</div>
 
 <div class="card">
   <h2>だぽん商店＜素材屋＞</h2>
